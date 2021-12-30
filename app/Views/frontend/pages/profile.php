@@ -14,13 +14,13 @@
                         </div>
                         <div class="card-body box-profile">
                             <div class="text-center">
-                                <img class="profile-user-img img-fluid img-circle" src="<?= base_url('assets/images'); ?>/default-user.png" alt="User profile picture">
+                                <img class="profile-user-img img-fluid img-circle" src="<?= base_url('assets/images'); ?>/<?= user()->profile_pic; ?>" alt="User profile picture">
                             </div>
 
                             <h3 class="profile-username text-center"><?= (user()->fullname) ? user()->fullname : user()->username; ?></h3>
 
                             <p class="text-muted text-center">
-                                <?= $level['group_id'] == '2' ? 'Pembeli' : 'Penjual'; ?>
+                                <?= $level['group_id'] == '3' ? 'Pembeli' : 'Penjual'; ?>
                             </p>
 
                             <strong><i class="fas fa-book mr-1"></i> E-mail</strong>
@@ -37,7 +37,7 @@
 
                             <hr>
 
-                            <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#edit"><b>Edit</b></a>
+                            <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#editProfile"><b>Edit Profile</b></a>
                             <?php if ($profile_status) : ?>
                                 <?php if ($profile_status['user_id'] != user_id()) : ?>
                                     <button class="btn btn-info btn-block" data-toggle="modal" data-target="#upgrade"><b>Upgrade Keanggotaan</b></button>
@@ -47,6 +47,44 @@
                             <?php endif; ?>
                         </div>
                     </div>
+                    <?php if ($profile_status) : ?>
+                        <?php if ($profile_status['merchant_status'] == 'active') : ?>
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title">Store Detail</h3>
+                                </div>
+                                <div class="card-body box-profile">
+                                    <div class="text-center">
+                                        <img class="profile-user-img img-fluid img-circle" src="<?= base_url('assets/images/merchants'); ?>/<?= $profile_status['store_name']; ?>/<?= $profile_status['store_logo']; ?>" alt="User profile picture">
+                                    </div>
+
+                                    <h3 class="profile-username text-center"><?= $profile_status['store_name']; ?></h3>
+
+                                    <p class="text-muted text-center">
+                                        <?php if ($profile_status['merchant_status'] == 'active') : ?>
+                                            <i class="fas fa-circle" style="color: green;"></i> <b><?= ucwords($profile_status['merchant_status']); ?></b>
+                                        <?php else : ?>
+                                            <i class="fas fa-circle" style="color: red;"></i> <b><?= ucwords($profile_status['merchant_status']); ?></b>
+                                        <?php endif; ?>
+                                        |
+                                        <?php if ($profile_status['verified']) : ?>
+                                            <i class="fas fa-check-circle" style="color: blue;"></i> <b>Verified</b>
+                                        <?php else : ?>
+                                            <i class="fas fa-minus-circle" style="color: red;"></i></i> <b>Unverified</b>
+                                        <?php endif; ?>
+                                    </p>
+
+                                    <strong><i class="fas fa-map-marker-alt mr-1"></i> Alamat Lengkap</strong>
+
+                                    <p class="text-muted"><?= $profile_status['store_address']; ?></p>
+
+                                    <hr>
+
+                                    <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#editStore"><b>Edit Store Details</b></a>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </div>
                 <div class="col-lg-10">
                     <div class="row">
@@ -54,13 +92,17 @@
                             <div class="card">
                                 <div class="card-header p-2">
                                     <ul class="nav nav-pills">
-                                        <li class="nav-item"><a class="nav-link" href="#activity" data-toggle="tab">Produk</a></li>
-                                        <li class="nav-item"><a class="nav-link active" href="#cart" data-toggle="tab">Cart</a></li>
+                                        <?php if ($profile_status) : ?>
+                                            <?php if ($profile_status['merchant_status'] == 'active') : ?>
+                                                <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Produk</a></li>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                        <li class="nav-item"><a class="nav-link" href="#cart" data-toggle="tab">Cart</a></li>
                                     </ul>
                                 </div>
                                 <div class="card-body">
                                     <div class="tab-content">
-                                        <div class="tab-pane" id="activity">
+                                        <div class="tab-pane <?= $profile_status['merchant_status'] == 'active' ? 'active' : ''; ?>" id="activity">
                                             <?php if ($profile_status) : ?>
                                                 <?php if ($profile_status['merchant_status'] == 'active') : ?>
                                                     <div class="row-col-12 mb-2">
@@ -102,7 +144,7 @@
                                                 <?php endif; ?>
                                             </div>
                                         </div>
-                                        <div class="tab-pane active" id="cart">
+                                        <div class="tab-pane" id="cart">
                                             <div class="row">
                                                 <div class="col-lg-12 text-center">
                                                     <img src="<?= base_url('assets/images'); ?>/no-product.png" alt="">
